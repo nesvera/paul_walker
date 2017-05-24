@@ -9,7 +9,7 @@ class myIndividual(Individual):
 
     # Genes do passive walker, cada posicao contem um range que representa os possiveis 
     # valores do gene(alelos)
-    alleles = [(537,537), (200,600), (10, 150), (10, 150), (1, 60), (0, 2*pi), (0, 2*pi), (0, 2*pi), (0, 2*pi)]
+    alleles = [(400,400), (200,600), (10, 100), (10, 100), (1, 60), (0, 2*pi), (0, 2*pi), (0, 2*pi), (0, 2*pi)]
     #alleles = [(537,537), (500,500), (50, 50), (50, 50), (45, 45), (pi/4, pi/4), (pi, pi), (0, 0), (0, 0)]
     length = 9
 
@@ -37,10 +37,10 @@ class myIndividual(Individual):
         self.chromosome[gene] = random.uniform(self.alleles[gene][0], self.alleles[gene][1])
 
 
-    def evaluate(self, generation=0, indiv=0, optimum=None):
+    def evaluate(self, generation=0, indiv=0, show_sim=False, optimum=None):
         "Evaluate individual fitness score."
 
-        if indiv%20 == 0:                       # apresenta a simulacao grafica a cada 10 individuos no processo de avaliacao
+        if indiv%20 == 0 and show_sim==True:                       # apresenta a simulacao grafica a cada 10 individuos no processo de avaliacao
             s = simulation(show=True)
         else:
             s = simulation(show=False)
