@@ -107,7 +107,7 @@ class Environment(object):
         indiv = 0
 
         for individual in self.population:                          #avalia a populacao criada
-            individual.evaluate(generation, indiv, self.optimum)
+            individual.evaluate(generation, indiv, True, self.optimum)
             indiv += 1
         self.report()
 
@@ -127,7 +127,7 @@ class Environment(object):
 
         s = Simulation()                    #Show the best result
         while True:
-            print(s.mySimul((best.chromosome[0], best.chromosome[1]), best.chromosome[2], best.chromosome[3],
+            print(s.individual_sim((best.chromosome[0], best.chromosome[1]), best.chromosome[2], best.chromosome[3],
                       best.chromosome[4], best.chromosome[5], best.chromosome[6], best.chromosome[7], best.chromosome[8]), self.generation, 0 )
 
 
@@ -158,8 +158,8 @@ class Environment(object):
             
             for individual in offspring:
                 self._mutate(individual)
-                individual.evaluate(self.generation, indiv, self.optimum)
-                print indiv
+                individual.evaluate(self.generation, indiv, False, self.optimum)
+                
                 indiv += 1
                 next_population.append(individual)
 
@@ -196,3 +196,6 @@ class Environment(object):
         print "="*70
         print "generation: ", self.generation
         print "best:       ", self.best
+        s = simulation(show=True)
+        s.individual_sim((self.best.chromosome[0], self.best.chromosome[1]), self.best.chromosome[2], self.best.chromosome[3], self.best.chromosome[4], self.best.chromosome[5], self.best.chromosome[6], self.best.chromosome[7], self.best.chromosome[8], self.generation, 0)
+        

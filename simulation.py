@@ -14,7 +14,7 @@ from time import sleep
 from walker import walker
 
 class simulation():
-    def __init__(self, scr_w = 600, scr_h = 600, \
+    def __init__(self, scr_w = 800, scr_h = 600, \
                     angle=pi/10, gravity=200, \
                     show=True):
         # Window size
@@ -92,7 +92,7 @@ class simulation():
         sim_time = 0
         #variavel para avaliar o chromosomo
 
-        sim_time = 300                  # 300 ~= 6 segundos
+        sim_time = 2500                  # 300 ~= 6 segundos
         time = 0
 
         # Fixed simulation time
