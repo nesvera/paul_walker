@@ -48,13 +48,14 @@ class simulation():
     def _invy(self, pos):
         return pos[0], self.scr_h - pos[1]
 
-    def step(self, delta):
+    def step(self, delta, time, sim_time, generation, individuo):
         # Simulation step
         self.space.step(delta)
         # Draw stuff (if show)
         if self.show:
             self.screen.fill(THECOLORS['black'])
             pygame_util.draw_space(self.screen, self.space)
+            pygame_util.text(self.screen, time, sim_time, generation, individuo)
             pygame.display.flip()
             self.clock.tick(1/delta)
 
@@ -72,7 +73,7 @@ class simulation():
                     running = False
                     pass
 
-            self.step(0.02)
+            self.step(0.02, 0, 0, 0)
 
     def put_robot(self, robot):
         self.robot = robot
@@ -84,26 +85,45 @@ class simulation():
             k += body.kinetic_energy
         return k
                 
-    def individual_sim(self, pos, ul, ll, w, lua, lla, rua, rla):
+    def individual_sim(self, pos, ul, ll, w, lua, lla, rua, rla, generation, individuo):
 
         robot = walker(self.space, pos, ul, ll, w, lua, lla, rua, rla)
                 
         sim_time = 0
         #variavel para avaliar o chromosomo
 
+        sim_time = 300                  # 300 ~= 6 segundos
+        time = 0
+
         # Fixed simulation time
-        while sim_time < 30:                       # 300 ~= 6 segundos
-            print "-->" + str(sim_time) + "  " + str(self.space.bodies[0].position) + "  " + str(self.space.bodies[1].position) + "  " + str(self.space.bodies[2].position) + "  " + str(self.space.bodies[3].position)
-            sleep(10)
-            self.step(0.02)
-            sim_time += 1
+        #while time < sim_time:                       
+            #print "-->" + str(sim_time) + "  " + str(self.space.bodies[0].position) + "  " + str(self.space.bodies[1].position) + "  " + str(self.space.bodies[2].position) + "  " + str(self.space.bodies[3].position)
+            #sleep(0.1)
+            
+            #print "-->" + str(sim_time)
+            #self.step(0.02, time, sim_time, individuo, generation)
+            #time += 1
 
             # algoritmo para gerar score
             # conferir a altura do walker para ver se ele esta de p'e
             # se ele ainda esta de p'e, pegar x
             # quem ir mais pra esquerda ganha
 
-        return sim_time, self.space.bodies[0].position, 0
+        #return sim_time, self.space.bodies[0].position, 0
+
+        iterations = 0
+        ke_sum = 0
+        while True:
+            self.step(0.02, iterations, sim_time, generation, individuo)
+            iterations += 1
+
+            ke = self.get_ke()
+            ke_sum += ke
+            if ke < 5000 or iterations > 2500:
+                return iterations, self.space.bodies[1].position, ke_sum
+
+
+
 
     """
                 codigo do mago
