@@ -4,7 +4,6 @@
 
 import random
 from math import pi
-
 from simulation import *
 
 MAXIMIZE, MINIMIZE = 11, 22
@@ -108,7 +107,7 @@ class Environment(object):
         indiv = 0
 
         for individual in self.population:                          #avalia a populacao criada
-            individual.evaluate(indiv, self.optimum)
+            individual.evaluate(generation, indiv, self.optimum)
             indiv += 1
         self.report()
 
@@ -118,7 +117,6 @@ class Environment(object):
         return [self.kind() for individual in range(self.size)]
 
     def run(self):
-        return
         try:
             while not self._goal():
                 self.step()
@@ -130,7 +128,7 @@ class Environment(object):
         s = Simulation()                    #Show the best result
         while True:
             print(s.mySimul((best.chromosome[0], best.chromosome[1]), best.chromosome[2], best.chromosome[3],
-                      best.chromosome[4], best.chromosome[5], best.chromosome[6], best.chromosome[7], best.chromosome[8]))
+                      best.chromosome[4], best.chromosome[5], best.chromosome[6], best.chromosome[7], best.chromosome[8]), self.generation, 0 )
 
 
     def _goal(self):
@@ -139,13 +137,15 @@ class Environment(object):
     
     def step(self):
         self.population.sort()
+        self.generation += 1
         self._crossover()
         # funcao explicita do evaluate
-        self.generation += 1
+        
         self.report()
     
     def _crossover(self):
         next_population = [self.best.copy()]
+
         while len(next_population) < self.size:
             mate1 = self._select()
             if random.random() < self.crossover_rate:
@@ -153,10 +153,16 @@ class Environment(object):
                 offspring = mate1.crossover(mate2)
             else:
                 offspring = [mate1.copy()]
+
+            indiv = 0
+            
             for individual in offspring:
                 self._mutate(individual)
-                individual.evaluate(self.generation, self.optimum)
+                individual.evaluate(self.generation, indiv, self.optimum)
+                print indiv
+                indiv += 1
                 next_population.append(individual)
+
         self.population = next_population[:self.size]
 
     def _select(self):

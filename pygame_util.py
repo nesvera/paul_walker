@@ -172,6 +172,15 @@ def draw_segment(surface, segment):
     else:
         color = pygame.color.THECOLORS["blue"]
     pygame.draw.lines(surface, color, False, [p1,p2], max(int(segment.radius),1))
+
+def text(screen, time, sim_time, generation, individuo):
+    font=pygame.font.Font(None,30)
+    #scoretext=font.render("Generation: " + str(individuo) + "Individuo: " + str(individuo) + "\nTime: " + str(time) + "/" + str(sim_time), 1,(255,255,255))
+    scoretext=font.render("Time: " + str(time) + "/" + str(sim_time), 1,(255,255,255))
+    screen.blit(scoretext, (10, 10))
+    timetext=font.render("Generation: " + str(generation) + " - Individuo: " + str(individuo), 1,(255,255,255))
+    screen.blit(timetext, (10, 35))
+    
     
 def draw_constraint(surface, constraint):
     """Draw a pymunk.Constraint object
@@ -232,5 +241,6 @@ def from_pygame(p, surface):
     pymunk coordinates    
     """
     return to_pygame(p,surface)
+
 
             
