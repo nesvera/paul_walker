@@ -1,5 +1,3 @@
-#!/usr/bin/env python2.7
-
 import pygame
 from pygame.locals import *
 from pygame.color import *
@@ -10,6 +8,7 @@ from pymunk import Vec2d
 from math import *
 import random
 from time import sleep
+import copy
 
 from walker import walker
 
@@ -69,11 +68,9 @@ class simulation():
                 if event.type == QUIT:
                     running = False
                 if event.type == MOUSEBUTTONDOWN:
-                    #robot = walker(self.space, self._invy((537,226)), 80, 60, 10, pi/16, 0, 0, 0)
-                    running = False
-                    pass
-
-            self.step(0.02, 0, 0, 0)
+                    robot = walker(self.space, self._invy((537,226)), 80, 60, 40, pi, pi/2, 0, 0)
+        
+            self.step(0.02, 0, 0, 0,0)
 
     def put_robot(self, robot):
         self.robot = robot
@@ -84,55 +81,51 @@ class simulation():
         for body in self.space.bodies:
             k += body.kinetic_energy
         return k
-                
-    def individual_sim(self, pos, ul, ll, w, lua, lla, rua, rla, generation, individuo):
 
+    # Simulation of an individual       
+    def individual_sim(self, pos, ul, ll, w, lua, lla, rua, rla, generation, individuo):
         robot = walker(self.space, pos, ul, ll, w, lua, lla, rua, rla)
                 
-        sim_time = 0
-        #variavel para avaliar o chromosomo
-
         sim_time = 2500                  # 300 ~= 6 segundos
         time = 0
+        walk_time = 0
 
-        # Fixed simulation time
-        #while time < sim_time:                       
-            #print "-->" + str(sim_time) + "  " + str(self.space.bodies[0].position) + "  " + str(self.space.bodies[1].position) + "  " + str(self.space.bodies[2].position) + "  " + str(self.space.bodies[3].position)
-            #sleep(0.1)
+        last_x = [(0,0), (0,0), (0,0), (0,0)]
+
+        while True: 
+            self.step(0.02, time, sim_time, generation, individuo)
+            time += 1
+
+            # Get data from simulation
+                # self.space.bodies[0].position = upper_leg_1
+                # self.space.bodies[1].position = lower_leg_1
+                # self.space.bodies[2].position = lower_leg_2
+                # self.space.bodies[3].position = upper_leg_2
             
-            #print "-->" + str(sim_time)
-            #self.step(0.02, time, sim_time, individuo, generation)
-            #time += 1
-
-            # algoritmo para gerar score
-            # conferir a altura do walker para ver se ele esta de p'e
-            # se ele ainda esta de p'e, pegar x
-            # quem ir mais pra esquerda ganha
-
-        #return sim_time, self.space.bodies[0].position, 0
-
-        iterations = 0
-        ke_sum = 0
-        while True:
-            self.step(0.02, iterations, sim_time, generation, individuo)
-            iterations += 1
-
             ke = self.get_ke()
-            ke_sum += ke
-            if ke < 5000 or iterations > 2500:
-                return iterations, self.space.bodies[1].position, ke_sum
+            cur_x = [(self.space.bodies[0].position.x, self.space.bodies[0].position.y),\
+                     (self.space.bodies[1].position.x, self.space.bodies[1].position.y),\
+                     (self.space.bodies[2].position.x, self.space.bodies[2].position.y),\
+                     (self.space.bodies[3].position.x, self.space.bodies[3].position.y)]
 
+            # Se o individuo estar se mexendo ou ainda tiver tempo ou se estiver dentro do cenario
+            if time < sim_time and ke > 30000 and min(cur_x[:][0]) > 20:
 
+                #Se a upper_leg estiver acima da lower_leg, em relacao ao eixo Y
+                if (cur_x[0][1] - cur_x[1][1] > ll/2) and (cur_x[3][1] - cur_x[2][1] > ll/2):
 
+                    #Se a posicao em x da lower_leg for diferente do passo anterior
+                    if cur_x[1][0] < last_x[1][0] or cur_x[2][0] < last_x[2][0]:
+                        walk_time += 1
 
-    """
-                codigo do mago
-                ke = self.get_ke()
-                ke_sum += ke
-                if ke < 5000 or iterations > 2500:
-                    return iterations, self.space.bodies[1].position, ke_sum
-                """
-
+            #Caso tempo acabe ou walker fique parado
+            else:
+                #retorna o tempo de caminhada e a o valor mais proximo da borda esquerda
+                return walk_time, (800 - min(cur_x[1][0], cur_x[2][0]))
+            
+            last_x = copy.copy(cur_x)
+            
+# Uncomment this lines, change the values from the robot on line 73, run simulation.py, and use mouse click to create a robot
 #s = simulation()
 #s.interactive()
 

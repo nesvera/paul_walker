@@ -1,7 +1,6 @@
 from genetic import *
 
 class myIndividual(Individual):
-    """ ... """
 
     # Gene:     Codifica um simples parametro
     # Alelos:   Valores que o gene pode assumir
@@ -9,8 +8,7 @@ class myIndividual(Individual):
 
     # Genes do passive walker, cada posicao contem um range que representa os possiveis 
     # valores do gene(alelos)
-    alleles = [(400,400), (200,600), (10, 100), (10, 100), (1, 60), (0, 2*pi), (0, 2*pi), (0, 2*pi), (0, 2*pi)]
-    #alleles = [(537,537), (500,500), (50, 50), (50, 50), (45, 45), (pi/4, pi/4), (pi, pi), (0, 0), (0, 0)]
+    alleles = [(600,600), (200,600), (10, 100), (10, 100), (1, 60), (0, 2*pi), (0, 2*pi), (0, 2*pi), (0, 2*pi)]
     length = 9
 
     """ Passive walker genes                                        alleles values range based in 600x600 resolution
@@ -24,6 +22,7 @@ class myIndividual(Individual):
         rua -- the angle of the right hip                           0 to 360 degrees
         rla -- the angle of the right ankle                         0 to 360 degrees
     """
+
     def __init__(self, chromosome=None):
         self.chromosome = chromosome or self._makechromosome()
         self.score = None  # set during evaluation
@@ -40,30 +39,15 @@ class myIndividual(Individual):
     def evaluate(self, generation=0, indiv=0, show_sim=False, optimum=None):
         "Evaluate individual fitness score."
 
-        if indiv%20 == 0 and show_sim==True:                       # apresenta a simulacao grafica a cada 10 individuos no processo de avaliacao
+        if indiv%10 == 0 and show_sim==True:                       # apresenta a simulacao grafica a cada 10 individuos no processo de avaliacao
             s = simulation(show=True)
         else:
             s = simulation(show=False)
 
-        sim_time, pos_x, height = s.individual_sim((self.chromosome[0], self.chromosome[1]), self.chromosome[2], self.chromosome[3], self.chromosome[4], self.chromosome[5], self.chromosome[6], self.chromosome[7], self.chromosome[8], generation, indiv)
+        walk_time, distancia = s.individual_sim((self.chromosome[0], self.chromosome[1]), self.chromosome[2], self.chromosome[3], self.chromosome[4], self.chromosome[5], self.chromosome[6], self.chromosome[7], self.chromosome[8], generation, indiv)
 
-
-
-        ## mostrar uma simulacao a cada 10
-
-        ## algoritmo para calcular score
-
-
-        #dist = sqrt(pos[0]**2 + pos[1]**2)
-
-        dist = pos_x[0]
-        #dist = 0
-
-        score = (600-dist)/6 # 0 - 100
-
-        # score = ke**2 + iterations - dist**3
-
-        self.score = score
+        #self.score = score
+        self.score = 0.9*walk_time + 0.3*distancia
 
         return 0
 
@@ -77,40 +61,5 @@ class myIndividual(Individual):
                (self.__class__.__name__,
                 chromosome_str, self.score)
 
-g = Environment(myIndividual, size=200, maxgenerations=200, crossover_rate=0.95, mutation_rate=0.04, optimum=100)
+g = Environment(myIndividual, size=200, maxgenerations=200, crossover_rate=0.90, mutation_rate=0.3, optimum=100)
 g.run()
-
-
-
-
-""" 
-
-from genetic import *
-from time import sleep
-
-palavra_secreta = 'HELLOWORLD'
-
-class Palavra(Individual):
-    global palavra_secreta
-    alleles = list(range(ord('A'),ord('Z')+1))
-    length = len(palavra_secreta)
-    seperator = ''
-    optimization = MINIMIZE
-    def __init__(self, chromosome=None):
-        self.segredo = [ord(letra) for letra in palavra_secreta]
-        super(Palavra, self).__init__(chromosome)
-    def evaluate(self, generation=0, optimum=None):
-        erro = 0
-        for x,y in zip(self.segredo, self.chromosome):
-            erro += (x-y)**2
-        self.score = erro
-        sleep(0.01)
-
-
-from palavra import Palavra
-from genetic import Environment
-
-e = Environment(Palavra, None, 100, 100, 0, 0.95, 0.02, optimum=0)
-e.run()
-
-"""

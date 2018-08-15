@@ -175,7 +175,6 @@ def draw_segment(surface, segment):
 
 def text(screen, time, sim_time, generation, individuo):
     font=pygame.font.Font(None,30)
-    #scoretext=font.render("Generation: " + str(individuo) + "Individuo: " + str(individuo) + "\nTime: " + str(time) + "/" + str(sim_time), 1,(255,255,255))
     scoretext=font.render("Time: " + str(time) + "/" + str(sim_time), 1,(255,255,255))
     screen.blit(scoretext, (10, 10))
     timetext=font.render("Generation: " + str(generation) + " - Individuo: " + str(individuo), 1,(255,255,255))

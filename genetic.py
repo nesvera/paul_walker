@@ -1,7 +1,3 @@
-#
-# genetic.py
-#
-
 import random
 from math import pi
 from simulation import *
@@ -136,7 +132,8 @@ class Environment(object):
                self.best.score == self.optimum
     
     def step(self):
-        self.population.sort()
+        self.population.sort(key=lambda indiv: indiv.score, reverse=True)
+
         self.generation += 1
         self._crossover()
         # funcao explicita do evaluate
@@ -196,6 +193,7 @@ class Environment(object):
         print "="*70
         print "generation: ", self.generation
         print "best:       ", self.best
+
         s = simulation(show=True)
         s.individual_sim((self.best.chromosome[0], self.best.chromosome[1]), self.best.chromosome[2], self.best.chromosome[3], self.best.chromosome[4], self.best.chromosome[5], self.best.chromosome[6], self.best.chromosome[7], self.best.chromosome[8], self.generation, 0)
         
