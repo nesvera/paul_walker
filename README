@@ -1,0 +1,9 @@
+Mundo dos walkers - Em busca do novo Paul Walker
+
+Para executar
+
+python paul.py
+
+Dependencias:
+ - pygame 1.9.3
+ - pymunk 3.0.0
